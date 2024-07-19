@@ -1,6 +1,8 @@
 import random
+import math
 
-class data:
+
+class settings:
   eatWay = ["Hunter","Peaceful"]
   group = {
     "1":"Earth",
@@ -16,9 +18,8 @@ class data:
     "11":"Air",
     "12":"Air"}
   sex = ["male", "female"]
-  #livingPlace = ["Earth", "Water", "Air"]
-  
-  pass
+  size = (1,5)
+  liveTime = (15,50)
 
 class World:
   
@@ -30,7 +31,7 @@ class World:
   def getEat(self,nameOfEat):
     if nameOfEat == "OrganicEat":
       return self.countOfOrganicEat
-    elif nameOfEat in data.group:
+    elif nameOfEat in settings.group:
       for animel in self.listOfAnimal:
         animel:Animale
         if animel.getName():
@@ -47,48 +48,48 @@ class World:
   
   def addNewAnimal(self):
     animal:Animale
-    eatWay = random.choice(data.eatWay)
-    group_id = random.randint(0,len(data.group)-1)
-    grope = (list(data.group.keys())[group_id],list(data.group.values())[group_id])
-    if eatWay == data.eatWay[0]:
+    eatWay = random.choice(settings.eatWay)
+    group_id = random.randint(0,len(settings.group)-1)
+    grope = (list(settings.group.keys())[group_id],list(settings.group.values())[group_id])
+    if eatWay == settings.eatWay[0]:
       animal = Hunter(
         grope[0],
-        random.randint(1,4),
-        random.choice(data.sex),
-        random.choice(list(data.group.keys())),
+        random.randint(settings.size[0],settings.size[1]),
+        random.choice(settings.sex),
+        random.choice(list(settings.group.keys())),
         grope[1],
-        random.randint(5,15),
+        random.randint(settings.liveTime[0],settings.liveTime[1]),
         100)
     else:
       animal = Peaceful(
         grope[0],
-        random.randint(1,4),
-        random.choice(data.sex),
+        random.randint(settings.size[0],settings.size[1]),
+        random.choice(settings.sex),
         "OrganicEat",
         grope[1],
-        random.randint(5,15),
+        random.randint(settings.liveTime[0],settings.liveTime[1]),
         100)
     self.listOfAnimal.append(animal)
 
   def addAnumalWithSetting(self, name,size, livingPlace,hunger):
 
-    if livingPlace == data.eatWay[0]:
+    if livingPlace == settings.eatWay[0]:
       animal = Hunter(
         name,
         random.randint(1,size),
-        random.choice(data.sex),
-        random.choice(list(data.group.keys())),
+        random.choice(settings.sex),
+        random.choice(list(settings.group.keys())),
         livingPlace,
-        random.randint(5,15),
+        random.randint(settings.liveTime[0],settings.liveTime[1]),
         hunger)
     else:
       animal = Peaceful(
         name,
         random.randint(1,size),
-        random.choice(data.sex),
+        random.choice(settings.sex),
         "OrganicEat",
         livingPlace,
-        random.randint(5,15),
+        random.randint(settings.liveTime[0],settings.liveTime[1]),
         hunger)
     self.listOfAnimal.append(animal)
 
@@ -125,7 +126,7 @@ class World:
     if numbres[0] == numbres[1]:
       print("animal did very strange fap :)")
     elif p1.getSex() == p2.getSex():
-      print("there are two genders -_-")
+      print("there are only two genders -_-")
     elif p1.getLivingPlace() != p2.getLivingPlace():
       print("they belong to different worlds")
     elif p1.getName() != p2.getName():
@@ -179,6 +180,7 @@ class Animale:
     self.hunger = hunger
     self.sex = sex
     self.age = 0
+    
   def getHunger(self):
     return self.hunger
   
@@ -186,7 +188,7 @@ class Animale:
     return self.age
   
   def getInfo(self):
-    return f"name: {self.name},age:{self.age}, hunger:{self.hunger}"
+    return f"name: {self.name},age:{self.age}, hunger:{self.hunger}, eat:{self.typeOfeat}"
   
   def getName(self):
     return self.name
@@ -229,6 +231,7 @@ class Peaceful(Animale):
   def stepLive(self, world:World):
     if world.getEat(self.typeOfeat) != 0:
       self._addHunger(26)
+      world.addOrganicEat(-1)
     else:
       self._addHunger(-9)
 
@@ -292,7 +295,7 @@ def playerMove(world : World, text):
     elif move == "6":
       exit()
     else:
-      playerMove(world,"-> ")
+      print("\n-----------------\nComanda not found\n-----------------\n")
   pass
 
 def AddstepLive(world:World):
@@ -304,7 +307,6 @@ def main():
 
   world = World(10)
   spawnFirstAnimals(world,10)
-
   while True:
     playerMove(world,"what do you want to do?\n1)Add new animal\n2)increase count of eat\n3)watch info by all animals\n4)Modeling procass of multiply\n5)Go to next day\n6)Exit\n-> ")
     AddstepLive(world)
